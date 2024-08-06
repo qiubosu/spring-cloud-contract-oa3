@@ -6,13 +6,13 @@ version: 2
 jobs:
     build:
         docker:
-        # specify the version you desire here
-        - image: circleci/openjdk:11-jdk-browsers-legacy
+            # specify the version you desire here
+            - image: circleci/openjdk:11-browsers-legacy
 
-        # Specify service dependencies here if necessary
-        # CircleCI maintains a library of pre-built images
-        # documented at https://circleci.com/docs/2.0/circleci-images/
-        # - image: circleci/postgres:9.4
+            # Specify service dependencies here if necessary
+            # CircleCI maintains a library of pre-built images
+            # documented at https://circleci.com/docs/2.0/circleci-images/
+            # - image: circleci/postgres:9.4
 
         working_directory: ~/repo
 
@@ -21,33 +21,24 @@ jobs:
             MAVEN_OPTS: -Xmx3200m
 
         steps:
+            - checkout
 
-        # - run: gpg2 --list-keys
+            # Download and cache dependencies
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ checksum "pom.xml" }}
+                      # fallback to using the latest cache if no exact match is found
+                      - v1-dependencies-
 
-        - checkout
+            - run: mvn dependency:go-offline
 
-        # Download and cache dependencies
-        - restore_cache:
-              keys:
-              - v1-dependencies-{{ checksum "pom.xml" }}
-              # fallback to using the latest cache if no exact match is found
-              - v1-dependencies-
+            - save_cache:
+                  paths:
+                      - ~/.m2
+                  key: v1-dependencies-{{ checksum "pom.xml" }}
 
-        - run: mvn dependency:go-offline
-
-        - save_cache:
-              paths:
-              - ~/.m2
-              key: v1-dependencies-{{ checksum "pom.xml" }}
-
-        - run:  mvn package sonar:sonar -Dsonar.organization=qiubosu-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_PAS}
-
-       # - run: |
-       #       curl -fsSL https://git.io/vpDIq | \
-       #         bash -s -- ${PUB_URL} ${ENC_PASS}
-
-       # - run: |
-       #       curl -fsSL https://git.io/vpDIq | \
-       #         bash -s -- ${PRV_URL} ${ENC_PASS}
-
-       # - run: mvn -s .circleci.settings.xml deploy
+            - run: git config user.email "qiubosu@gmail.com"
+            - run: git config user.name "Via CircleCI Build"
+            # run tests!
+            #- run: mvn --batch-mode release:prepare release:perform -s .circleci/settings.xml
+            - run: mvn integration-test
