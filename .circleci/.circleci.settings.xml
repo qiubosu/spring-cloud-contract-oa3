@@ -2,7 +2,7 @@
     <servers>
         <server>
             <id>ossrh</id>
-            <username>john@springframework.guru</username>
+            <username>qiubosu@gmail.com</username>
             <password>${env.OSSRH_PWD}</password>
         </server>
     </servers>

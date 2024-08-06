@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import groovy.util.logging.Slf4j
 import io.swagger.v3.oas.models.PathItem
+import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.parser.OpenAPIV3Parser
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
